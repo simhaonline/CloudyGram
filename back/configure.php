@@ -4,6 +4,7 @@ include("./inc/func.php");
 
 	if(file_exists("dbase.db")){   echo Success(0, "Already configured"); die;   }      
 		//Dbase block
+		@rename("./backup.htaccess", "./.htaccess");
 		$parameters = @json_decode(@file_get_contents("php://input"));
 		$time = time();
 		$db_init = new SQLite3("dbase.db");
