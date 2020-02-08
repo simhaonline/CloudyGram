@@ -128,7 +128,7 @@ include('./inc/db.php');
 	}
 		elseif(isset($parameters->folderId) AND isset($parameters->name))
 		{
-			$folderId = (int)$parameters->fileId;
+			$folderId = (int)$parameters->folderId;
 			$folderId = $db->escapeString($folderId);
 			$name = $parameters->name;
 			$name = $db->escapeString(CleanStr($name));
