@@ -7,13 +7,13 @@ include('./inc/db.php');
 
 
 
-if (!LoggedIn()){
+	if(!LoggedIn()){
 	header('Location: /login.html');
 	echo Success(0, "Your login session expired, please re-login");
 	die;
 }
 
-elseif($_GET['operation'] !== 'removelink' AND $_GET['operation'] !== 'removepass' AND $_GET['operation'] !== 'sharelink' AND $_GET['operation'] !== 'rename' AND $_GET['operation'] !== 'remove' )
+	elseif($_GET['operation'] !== 'removelink' AND $_GET['operation'] !== 'removepass' AND $_GET['operation'] !== 'sharelink' AND $_GET['operation'] !== 'rename' AND $_GET['operation'] !== 'remove' )
 {
 	echo 'Missing GET option'; die;
 }
@@ -22,7 +22,7 @@ elseif($_GET['operation'] !== 'removelink' AND $_GET['operation'] !== 'removepas
 
 
 
-else{
+	else{
 
 
 
@@ -40,7 +40,7 @@ else{
 			
 		}
 		else{   echo Success(0, "Missing POST parameters"); die;   }
-}
+	}
 
 
 
@@ -101,24 +101,26 @@ else{
 		else{
 			echo Success(0, "Missing POST parameters"); die;
 		}
-}
+	}
 
 
-if($_GET['operation'] == 'rename'){
-		$parameters = @json_decode(@file_get_contents("php://input"));
-		if(isset($parameters->fileId) AND isset($parameters->name)){
-			$fileId = (int)$parameters->fileId;
-			$fileId = $db->escapeString($fileId);
-			$name = $parameters->name;
-			$name = $db->escapeString(CleanStr($name));
-			$sql_rename = "UPDATE files SET name = '$name' WHERE fileId = '$fileId'";
+		if($_GET['operation'] == 'rename'){
+			$parameters = @json_decode(@file_get_contents("php://input"));
+				if(isset($parameters->fileId) AND isset($parameters->name)){
+					$fileId = (int)$parameters->fileId;
+					$fileId = $db->escapeString($fileId);
+					$name = $parameters->name;
+					$name = $db->escapeString(CleanStr($name));
+					$sql_rename = "UPDATE files SET name = '$name' WHERE fileId = '$fileId'";
 			
-			$sql_rename = $db->query($sql_rename);
+					$sql_rename = $db->query($sql_rename);
 			
-			if ($sql_rename == true){	echo json_encode(array("successCode"=>1,"response"=>"File successfully renamed","fileId"=>$fileId,"name"=>$name));	}
+		if ($sql_rename == true)
+		{	echo json_encode(array("successCode"=>1,"response"=>"File successfully renamed","fileId"=>$fileId,"name"=>$name));	}
+			
 			else{	echo Success(0, $db->lastErrorMsg() . PHP_EOL); $db->close(); die;	}
 			
-}
+	}
 		elseif(isset($parameters->folderId) AND isset($parameters->name))
 		{
 			$folderId = (int)$parameters->fileId;
@@ -148,20 +150,21 @@ if($_GET['operation'] == 'rename'){
 
 
 		if($_GET['operation'] == 'remove'){
-		$parameters = @json_decode(@file_get_contents("php://input"));
-		if(isset($parameters->fileId))
+			$parameters = @json_decode(@file_get_contents("php://input"));
+				if(isset($parameters->fileId))
 		{
-			$fileId = (int)$parameters->fileId;
-			$fileId = $db->escapeString($fileId);
-			$sql_file_remove = "DELETE FROM files WHERE fileId = '$fileId'";
+					$fileId = (int)$parameters->fileId;
+					$fileId = $db->escapeString($fileId);
+					$sql_file_remove = "DELETE FROM files WHERE fileId = '$fileId'";
 			
-			$sql_file_remove = $db->query($sql_file_remove);
+					$sql_file_remove = $db->query($sql_file_remove);
 			
-			if($sql_file_remove == true)	
-			{	echo Success(1, "Remove Successful", "fileId", $fileId); $db->close(); /* Madeline block */  die;	}
+					if($sql_file_remove == true)	
+				{	echo Success(1, "Remove Successful", "fileId", $fileId); $db->close(); /* Madeline block */  die;	}
 			else
-			{ echo Success(0, $db->lastErrorMsg() . PHP_EOL); die; }
+				{ echo Success(0, $db->lastErrorMsg() . PHP_EOL); die; }
 		}
+		
 		elseif(isset($parameters->folderId))
 		{
 			$folderId = (int)$parameters->folderId;
@@ -181,7 +184,7 @@ if($_GET['operation'] == 'rename'){
 			{ echo Success(0, $db->lastErrorMsg() . PHP_EOL); die; }
 		}
 
-		else {  echo "Missing POST parameters"; die; }
+			else {  echo "Missing POST parameters"; die; }
 		
 			}
 		
@@ -191,5 +194,5 @@ if($_GET['operation'] == 'rename'){
 		
 		
 		
-}
+	}
 ?>
