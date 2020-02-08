@@ -10,7 +10,7 @@ if(!isset($_GET['link'])){
 $link = CleanStr($_GET['link']);
 $pass = CleanStr($_GET['pass']);
 $link = $db->escapeString(CleanStr($link));
-$link_sql = "SELECT link, fileId, password FROM links WHERE link='$link'";
+$link_sql = "SELECT link, fileId, password, count FROM links WHERE link='$link'";
 $link_result = $db->query($link_sql);
 $link_row = $link_result->fetchArray(SQLITE3_ASSOC);
 if(!isset($link_row['link'])){
@@ -18,13 +18,22 @@ if(!isset($link_row['link'])){
 }
 else{
 	
-	if($link_row['password'] == NULL){
-		//...//
-		echo "Downloading";
+		if($link_row['password'] == NULL){
+		
+			$count = (int)$link_row['count']; $count++;
+			$sql_count_update = "UPDATE links SET count = '$count' WHERE link = '" . $link_row['link'] . "'";
+			$db->query($sql_count_update);
+		
+		echo "Downloading"; die;
 	}
-	elseif($pass == $link_row['password'])
+	
+		elseif($pass == $link_row['password'])
 		{
+			$count = (int)$link_row['count'];  $count++;
+			$sql_count_update = "UPDATE links SET count = '$count' WHERE link = '" . $link_row['link']."'";
+			$db->query($sql_count_update);
 		//../../
+		
 		echo "Downloading with password";
 		
 		die;
@@ -48,8 +57,6 @@ EOLY;
 	die;
 		}
 }
-	///...///
-	//echo $link_row['fileId'];
 
 
 ?>
