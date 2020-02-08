@@ -57,7 +57,7 @@ include('./inc/db.php');
 			{   echo Success(0, "Error: $db->lastErrorMsg()");   }
 			
 		}
-		else{   echo "Missing POST parameters"; die;   }
+		else{   echo Success(0, "Missing POST parameters"); die;   }
 	}
 
 
@@ -104,6 +104,8 @@ include('./inc/db.php');
 	}
 
 
+
+
 		if($_GET['operation'] == 'rename'){
 			$parameters = @json_decode(@file_get_contents("php://input"));
 				if(isset($parameters->fileId) AND isset($parameters->name)){
@@ -111,7 +113,10 @@ include('./inc/db.php');
 					$fileId = $db->escapeString($fileId);
 					$name = $parameters->name;
 					$name = $db->escapeString(CleanStr($name));
-					$sql_rename = "UPDATE files SET name = '$name' WHERE fileId = '$fileId'";
+					
+					if(end(explode(".", $name)) == $name) {$extension =  NULL;} else {$extension = end(explode(".", $name));}
+						
+					$sql_rename = "UPDATE files SET name = '$name', extension = '$extension' WHERE fileId = '$fileId'";
 			
 					$sql_rename = $db->query($sql_rename);
 			
@@ -137,13 +142,11 @@ include('./inc/db.php');
 			{	echo Success(0, $db->lastErrorMsg() . PHP_EOL);$db->close(); die;	}
 			}
 		
-			else{ echo "Missing POST parameters"; die;}
+			else{ echo Success(0, "Missing POST parameters"); die; }
 		
 			}
 
 	
-
-
 
 
 
@@ -184,7 +187,7 @@ include('./inc/db.php');
 			{ echo Success(0, $db->lastErrorMsg() . PHP_EOL); die; }
 		}
 
-			else {  echo "Missing POST parameters"; die; }
+			else {  echo Success(0, "Missing POST parameters"); die; }
 		
 			}
 		
