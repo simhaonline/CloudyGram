@@ -2,12 +2,6 @@
 ob_start();
 include("./inc/func.php");
 include("./inc/db.php");
-/* if(Updates()){
-	echo Updates();
-}
-else{
-	echo "nigga";
-} */
 
 //if(!file_exists("dbase.db")){   header("Location: /welcome.html")   }
 if (LoggedIn()){
