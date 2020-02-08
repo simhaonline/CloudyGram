@@ -12,7 +12,7 @@ include("./inc/func.php");
 		$sql_files = 'CREATE TABLE files(fileId INTEGER, name TEXT, extension TEXT, filesize TEXT, date INTEGER, parentId INTEGER)';
 		$sql_folders = 'CREATE TABLE folders(folderId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date INTEGER, type TEXT, parentId INTEGER)';
 		$sql_folders_values = "INSERT INTO folders(folderId, name, date) VALUES ('0', '/', '$time')";
-		$sql_links = 'CREATE TABLE links(link TEXT, fileId TEXT, password TEXT, name TEXT)';
+		$sql_links = 'CREATE TABLE links(link TEXT, fileId TEXT, password TEXT, name TEXT, count INTEGER)';
 		$result_table_user = $db_init->exec($sql_table_user);
 		$result_values_user = $db_init->exec($sql_values);
 		$result_files = $db_init->exec($sql_files);
