@@ -13,7 +13,7 @@ include('./inc/db.php');
 	die;
 }
 
-	elseif($_GET['operation'] !== 'removelink' AND $_GET['operation'] !== 'removepass' AND $_GET['operation'] !== 'sharelink' AND $_GET['operation'] !== 'rename' AND $_GET['operation'] !== 'remove' )
+	elseif($_GET['operation'] !== 'removelink' AND $_GET['operation'] !== 'removepass' AND $_GET['operation'] !== 'sharelink' AND $_GET['operation'] !== 'rename' AND $_GET['operation'] !== 'remove' AND $_GET['operation'] !== 'create' AND $_GET['operation'] !== 'fetch')
 {
 	echo 'Missing GET option'; die;
 }
@@ -23,8 +23,29 @@ include('./inc/db.php');
 
 
 	else{
-
-
+		
+			if($_GET['operation'] == 'fetch'){
+		$parameters = @json_decode(@file_get_contents("php://input"));
+		if(isset($parameters->current_dir)){
+			$currentdir = (int)$parameters->current_dir;
+			$currentdir = $db->escapeString($currentdir);
+			$data = [];
+			$results = $db->query("SELECT * FROM files WHERE parentId = '$currentdir'");
+			//Check for null and empty elements => Below//
+			while ($res = $results->fetchArray(1))
+			{ array_push($data, $res);
+			foreach ($data as $key => $row) {
+			foreach ($row as $key1 => $value) {
+			if ($value === null OR $value == '' ) { unset($data[$key][$key1]); }
+		}
+		}
+		}
+			
+		
+			$files = Success(1, "Fetching is successful", "data", json_encode($data));
+			echo $files; die;
+	}
+		else{	echo Success(0, "Missing POST parameters"); die;	}
 
 
 
@@ -87,7 +108,7 @@ include('./inc/db.php');
 			else
 			{
 			$random_string = CleanStr($name) . "." . uniqid(str_replace(' ','', microtime()), true); //;D
-			$sql_create_link = "INSERT INTO links(fileId, name, link, password) VALUES ('$fileId', '$name', '$random_string', '$password')";
+			$sql_create_link = "INSERT INTO links(fileId, link, password) VALUES ('$fileId', '$random_string', '$password')";
 			$db->query($sql_create_link);
 			$sql_fetch_link = "SELECT link FROM links WHERE fileId='$fileId'";
 			$sql_fetch_link = $db->query($sql_fetch_link);
@@ -132,7 +153,7 @@ include('./inc/db.php');
 			$folderId = $db->escapeString($folderId);
 			$name = $parameters->name;
 			$name = $db->escapeString(CleanStr($name));
-			$sql_folder_rename = "UPDATE folders SET name = '$name' WHERE folderId = '$folderId'";
+			$sql_folder_rename = "UPDATE files SET name = '$name' WHERE folderId = '$folderId'";
 			
 			$sql_folder_rename = $db->query($sql_folder_rename);
 			
@@ -173,15 +194,13 @@ include('./inc/db.php');
 			$folderId = (int)$parameters->folderId;
 			$folderId = $db->escapeString($folderId);
 			$sql_files_folder_remove = "DELETE FROM files WHERE parentId = '$folderId'";
-			$sql_parent_folder_remove = "DELETE FROM folders WHERE parentId = '$folderId'";
-			$sql_folder_remove = "DELETE FROM folders WHERE folderId = '$folderId'";
+			$sql_folder_remove = "DELETE FROM files WHERE folderId = '$folderId'";
 			
 			
 			$sql_files_folder_remove = $db->query($sql_files_folder_remove);
-			$sql_parent_folder_remove = $db->query($sql_parent_folder_remove);
 			$sql_folder_remove = $db->query($sql_folder_remove);
 			
-			if($sql_files_folder_remove == true AND $sql_parent_folder_remove == true AND $sql_folder_remove == true)	
+			if($sql_files_folder_remove == true AND $sql_folder_remove == true)	
 			{	echo Success(1, "Remove Successful", "folderId", $folderId); $db->close(); /* Madeline block */ die;	}
 			else
 			{ echo Success(0, $db->lastErrorMsg() . PHP_EOL); die; }
@@ -190,6 +209,47 @@ include('./inc/db.php');
 			else {  echo Success(0, "Missing POST parameters"); die; }
 		
 			}
+		
+		
+		
+		
+		if($_GET['operation'] == 'create'){
+			$parameters = @json_decode(@file_get_contents("php://input"));
+		if(isset($parameters->name) AND isset($parameters->current_dir))
+		{
+			$currentdir = (int)$parameters->current_dir;
+			$currentdir = $db->escapeString($currentdir);
+			$name = CleanStr($parameters->name);
+			$name = $db->escapeString($name);
+			$folder_rows = $db->query("SELECT COUNT(folderId) as count FROM files");
+			$folder_rows = $folder_rows->fetchArray();
+			$folder_rows = (int)$folder_rows['count'];$folder_rows++;
+			
+			$sql_create_dir = "INSERT INTO files(folderId, name, date, parentId, type) VALUES ('$folder_rows', '$name', '$time', '$currentdir', 'folder')";
+			$sql_create_dir = $db->query($sql_create_dir);
+			if($sql_create_dir == true)
+			{	echo json_encode(array("successCode"=>1,"response"=>"Folder successfully created","folderId"=>$folder_rows,"name"=>$name));	}
+			
+			else 
+			{	echo Success(0, "Error: $db->lastErrorMsg()");		}
+			
+		}
+			
+			else
+			{ 	echo Success(0, "Missing POST parameters");			}
+		
+		
+		}
+		
+		}	
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
