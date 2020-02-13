@@ -1,0 +1,32 @@
+<Files "dbase.db">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "madeline.phar.version">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "madeline.phar">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "MadelineProto.log">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "session.madeline">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "session.madeline.lock">
+Order allow,deny
+Deny from all
+</Files>
+
+php_value upload_max_filesize 1500M
+php_value post_max_size 2000M

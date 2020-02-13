@@ -1,0 +1,29 @@
+<Files "cloudy.password">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "madeline.phar.version">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "madeline.phar">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "MadelineProto.log">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "session.madeline">
+Order allow,deny
+Deny from all
+</Files>
+
+<Files "session.madeline.lock">
+Order allow,deny
+Deny from all
+</Files>
